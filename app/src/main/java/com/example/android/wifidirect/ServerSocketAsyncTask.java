@@ -54,10 +54,11 @@ public class ServerSocketAsyncTask extends AsyncTask<Void, Void, String> {
             OkHttpClient httpClient = new OkHttpClient();
             Request httpRequest = new Request.Builder().url(request).build();
             Response httpResponse = httpClient.newCall(httpRequest).execute();
-            Log.d(TAG, "Http Response: " + httpResponse.body().string());
+            String toSend = httpResponse.body().string();
+            Log.d(TAG, "Http Response: " + toSend);
 
             // Write back to client
-            StreamUtils.sendBytes(httpResponse.body().string().getBytes(), outputStream);
+            StreamUtils.sendBytes(toSend.getBytes(), outputStream);
             outputStream.flush();
             outputStream.close();
             // Close serverSocket
