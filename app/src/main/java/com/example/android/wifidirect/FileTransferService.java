@@ -62,7 +62,7 @@ public class FileTransferService extends IntentService {
 
                 byte[] response = StreamUtils.readBytes(inputStream);
 
-                Log.d(TAG, "received response: " + response);
+                Log.d(TAG, "received response: " + new String(response));
 //                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 Log.e(WiFiDirectActivity.TAG, e.getMessage());
