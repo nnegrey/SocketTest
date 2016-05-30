@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -220,17 +219,30 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
                  * Save the input stream from the client -- should be URL request.
                  */
                 OutputStream outputStream = client.getOutputStream();
-
                 InputStream inputStream = client.getInputStream();
-                ByteArrayOutputStream result = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) != -1) {
-                    result.write(buffer, 0, length);
+
+                byte buf[] = new byte[1024];
+                int len;
+                try {
+                    //TODO:
+                    while ((len = inputStream.read(buf)) != -1) {
+                        Log.d("", "doInBackground: " + new String(buf));
+                    }
+                    Log.d("", "doInBackground: " + new String(buf));
+                    inputStream.close();
+                } catch (IOException e) {
+                    Log.d("Wifi-Device Detial: ", e.toString());
                 }
-                String request = result.toString("UTF-8");
-                Toast.makeText(context, request, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Received data from client: " + result);
+//
+//                ByteArrayOutputStream result = new ByteArrayOutputStream();
+//                byte[] buffer = new byte[1024];
+//                int length;
+//                while ((length = inputStream.read(buffer)) != -1) {
+//                    result.write(buffer, 0, length);
+//                }
+//                String request = result.toString("UTF-8");
+//                Toast.makeText(context, request, Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "Received data from client: " + result);
 
                 // Write back to client
                 outputStream.write("RECEIVED DATA!!".getBytes());
