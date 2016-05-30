@@ -53,7 +53,6 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
     private BroadcastReceiver receiver = null;
     WifiP2pDevice device;
     private boolean checkPeers = true;
-    private WifiP2pInfo info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,24 +120,23 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
         Log.d(TAG, "onConnectionInfoAvailable");
-        this.info = info;
 
         // After the group negotiation, we can determine the group owner.
         if (info.groupFormed && info.isGroupOwner) {
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
-            new ServerAsyncTask(getBaseContext()).execute();
+            new ServerSocketAsyncTask(getBaseContext()).execute();
         } else if (info.groupFormed) {
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.
-            Intent serviceIntent = new Intent(MainActivity.this, FileTransferService.class);
-            serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
-            serviceIntent.putExtra(FileTransferService.EXTRAS_DATA, "http://mwong56-thesis.herokuapp.com/");
-            serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+            Intent serviceIntent = new Intent(MainActivity.this, ClientSocketService.class);
+            serviceIntent.setAction(ClientSocketService.ACTION_SEND_FILE);
+            serviceIntent.putExtra(ClientSocketService.EXTRAS_DATA, "http://mwong56-thesis.herokuapp.com/");
+            serviceIntent.putExtra(ClientSocketService.EXTRAS_GROUP_OWNER_ADDRESS,
                     info.groupOwnerAddress.getHostAddress());
-            serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
+            serviceIntent.putExtra(ClientSocketService.EXTRAS_GROUP_OWNER_PORT, 8988);
             startService(serviceIntent);
         }
 
@@ -193,56 +191,5 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
         Toast.makeText(getBaseContext(), "Device disconnected.", Toast.LENGTH_SHORT).show();
         device = null;
         checkPeers = true;
-    }
-
-    public static class ServerAsyncTask extends AsyncTask<Void, Void, String> {
-
-        private final Context context;
-
-        public ServerAsyncTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-
-                /**
-                 * Create a server socket and wait for client connections. This
-                 * call blocks until a connection is accepted from a client
-                 */
-                ServerSocket serverSocket = new ServerSocket(8988);
-                Log.d("Wifi-Device Detial: ", "Server: Socket opened");
-                Socket client = serverSocket.accept();
-                Log.d("Wifi-Device Detial: ", "Server: connection done");
-
-
-                /**
-                 * If this code is reached, a client has connected and transferred data
-                 * Save the input stream from the client -- should be URL request.
-                 */
-                OutputStream outputStream = client.getOutputStream();
-                InputStream inputStream = client.getInputStream();
-
-                String request = new String(StreamUtils.readBytes(inputStream));
-                Log.d(TAG, "Request: " + request);
-
-                OkHttpClient httpClient = new OkHttpClient();
-                Request httpRequest = new Request.Builder().url(request).build();
-                Response httpResponse = httpClient.newCall(httpRequest).execute();
-                Log.d(TAG, "Http Response: " + httpResponse.body().toString());
-
-
-                // Write back to client
-                StreamUtils.sendBytes(httpResponse.body().toString().getBytes(), outputStream);
-                outputStream.close();
-                // Close serverSocket
-                serverSocket.close();
-            } catch (IOException e) {
-                Log.e("Wifi-Device Detial: ", e.getMessage());
-            }
-            return null;
-        }
-
     }
 }
