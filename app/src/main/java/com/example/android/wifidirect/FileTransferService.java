@@ -48,24 +48,24 @@ public class FileTransferService extends IntentService {
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
 
             try {
-                Log.d(WiFiDirectActivity.
+                Log.d(MainActivity.
                         TAG, "Opening client socket - ");
                 socket.bind(null);
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
 
-                Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
+                Log.d(MainActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream outputStream = socket.getOutputStream();
                 InputStream inputStream = socket.getInputStream();
 
                 StreamUtils.sendBytes(data.getBytes(), outputStream);
-                Log.d(WiFiDirectActivity.TAG, "Client: Data written");
+                Log.d(MainActivity.TAG, "Client: Data written");
 
                 byte[] response = StreamUtils.readBytes(inputStream);
 
                 Log.d(TAG, "received response: " + new String(response));
 //                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
-                Log.e(WiFiDirectActivity.TAG, e.getMessage());
+                Log.e(MainActivity.TAG, e.getMessage());
             } finally {
                 if (socket != null) {
                     if (socket.isConnected()) {
