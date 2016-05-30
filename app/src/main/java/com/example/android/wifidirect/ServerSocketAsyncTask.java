@@ -58,6 +58,7 @@ public class ServerSocketAsyncTask extends AsyncTask<Void, Void, String> {
 
             // Write back to client
             StreamUtils.sendBytes(httpResponse.body().string().getBytes(), outputStream);
+            outputStream.flush();
             outputStream.close();
             // Close serverSocket
             serverSocket.close();

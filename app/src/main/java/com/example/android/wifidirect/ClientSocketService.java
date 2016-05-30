@@ -63,6 +63,8 @@ public class ClientSocketService extends IntentService {
                 byte[] response = StreamUtils.readBytes(inputStream);
 
                 Log.d(TAG, "received response: " + new String(response));
+                inputStream.close();
+                socket.close();
 //                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 Log.e(MainActivity.TAG, e.getMessage());
