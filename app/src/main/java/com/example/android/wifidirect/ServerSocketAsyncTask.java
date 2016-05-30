@@ -57,7 +57,7 @@ public class ServerSocketAsyncTask extends AsyncTask<Void, Void, String> {
             Log.d(TAG, "Http Response: " + httpResponse.body().string());
 
             // Write back to client
-            StreamUtils.sendBytes(httpResponse.body().toString().getBytes(), outputStream);
+            StreamUtils.sendBytes(httpResponse.body().string().getBytes(), outputStream);
             outputStream.close();
             // Close serverSocket
             serverSocket.close();
