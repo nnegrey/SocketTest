@@ -49,13 +49,15 @@ public class FileTransferService extends IntentService {
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
 
             try {
-                Log.d(WiFiDirectActivity.TAG, "Opening client socket - ");
+                Log.d(WiFiDirectActivity.
+                        TAG, "Opening client socket - ");
                 socket.bind(null);
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
 
                 Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
                 stream.write(data.getBytes());
+                stream.close();
 
                 Log.d(WiFiDirectActivity.TAG, "Client: Data written");
 

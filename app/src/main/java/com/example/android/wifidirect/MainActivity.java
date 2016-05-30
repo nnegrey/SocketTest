@@ -234,6 +234,7 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
 
                 // Write back to client
                 outputStream.write("RECEIVED DATA!!".getBytes());
+                outputStream.close();
 
                 // Close serverSocket
                 serverSocket.close();
