@@ -27,6 +27,9 @@ import java.net.Socket;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by micha on 5/30/2016.
@@ -150,10 +153,10 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
         }
 
         if (peers.getDeviceList().size() == 0) {
-            Log.d(WiFiDirectActivity.TAG, "No devices found");
+            Log.d(MainActivity.TAG, "No devices found");
             return;
         }
-//
+
         for (WifiP2pDevice p : peers.getDeviceList()) {
             device = p;
             Log.d(TAG, "Found device: " + p.deviceName);
@@ -221,11 +224,17 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
                 OutputStream outputStream = client.getOutputStream();
                 InputStream inputStream = client.getInputStream();
 
-                byte[] request = StreamUtils.readBytes(inputStream);
+                String request = new String(StreamUtils.readBytes(inputStream));
                 Log.d(TAG, "Request: " + request);
 
+                OkHttpClient httpClient = new OkHttpClient();
+                Request httpRequest = new Request.Builder().url(request).build();
+                Response httpResponse = httpClient.newCall(httpRequest).execute();
+                Log.d(TAG, "Http Response: " + httpResponse.body().toString());
+
+
                 // Write back to client
-                StreamUtils.sendBytes("RECEIVED DATA!!".getBytes(), outputStream);
+                StreamUtils.sendBytes(httpResponse.body().toString().getBytes(), outputStream);
                 outputStream.close();
                 // Close serverSocket
                 serverSocket.close();
