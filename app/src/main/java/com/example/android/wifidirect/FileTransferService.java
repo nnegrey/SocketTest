@@ -29,7 +29,6 @@ public class FileTransferService extends IntentService {
     public static final String TAG = "FileTransferService";
 
 
-
     public FileTransferService() {
         super("FileTransferService");
     }
@@ -55,22 +54,16 @@ public class FileTransferService extends IntentService {
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
 
                 Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
-                OutputStream stream = socket.getOutputStream();
-                stream.write(data.getBytes());
-                stream.close();
+                OutputStream outputStream = socket.getOutputStream();
+                InputStream inputStream = socket.getInputStream();
 
+                StreamUtils.sendBytes(data.getBytes(), outputStream);
                 Log.d(WiFiDirectActivity.TAG, "Client: Data written");
 
-                InputStream inputStream = socket.getInputStream();
-                ByteArrayOutputStream result = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) != -1) {
-                    result.write(buffer, 0, length);
-                }
-                String response = result.toString("UTF-8");
-                Log.d(TAG, "received response: " +response);
-                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                byte[] response = StreamUtils.readBytes(inputStream);
+
+                Log.d(TAG, "received response: " + response);
+//                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 Log.e(WiFiDirectActivity.TAG, e.getMessage());
             } finally {

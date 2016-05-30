@@ -221,33 +221,12 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
                 OutputStream outputStream = client.getOutputStream();
                 InputStream inputStream = client.getInputStream();
 
-                byte buf[] = new byte[1024];
-                int len;
-                try {
-                    //TODO:
-                    while ((len = inputStream.read(buf)) != -1) {
-                        Log.d("", "doInBackground: " + new String(buf));
-                    }
-                    Log.d("", "doInBackground: " + new String(buf));
-                    inputStream.close();
-                } catch (IOException e) {
-                    Log.d("Wifi-Device Detial: ", e.toString());
-                }
-//
-//                ByteArrayOutputStream result = new ByteArrayOutputStream();
-//                byte[] buffer = new byte[1024];
-//                int length;
-//                while ((length = inputStream.read(buffer)) != -1) {
-//                    result.write(buffer, 0, length);
-//                }
-//                String request = result.toString("UTF-8");
-//                Toast.makeText(context, request, Toast.LENGTH_SHORT).show();
-//                Log.d(TAG, "Received data from client: " + result);
+                byte[] request = StreamUtils.readBytes(inputStream);
+                Log.d(TAG, "Request: " + request);
 
                 // Write back to client
-                outputStream.write("RECEIVED DATA!!".getBytes());
+                StreamUtils.sendBytes("RECEIVED DATA!!".getBytes(), outputStream);
                 outputStream.close();
-
                 // Close serverSocket
                 serverSocket.close();
             } catch (IOException e) {
