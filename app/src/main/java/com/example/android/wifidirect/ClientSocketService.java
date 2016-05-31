@@ -6,9 +6,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -78,7 +76,7 @@ public class ClientSocketService extends IntentService {
                 Log.d(MainActivity.TAG, "Client: Data written");
 
                 BleResponse bleResponse = BleResponse.parseResponse(new String(StreamUtils.readBytes(inputStream)));
-                Log.d(TAG, "received response: " + bleResponse.toJsonString());
+                Log.d(TAG, "received response: " + bleResponse.getBody().length());
                 inputStream.close();
                 socket.close();
 //                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();

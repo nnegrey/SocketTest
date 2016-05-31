@@ -66,6 +66,11 @@ public class BleResponse {
       this.code = code;
     }
 
+    public Builder body(String body) {
+      this.body = body;
+      return this;
+    }
+
     public Builder response(Response response) {
       try {
         this.body = response.body().string();
