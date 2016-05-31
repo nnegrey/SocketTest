@@ -47,14 +47,15 @@ public class ServerSocketAsyncTask extends AsyncTask<Void, Void, String> {
             OutputStream outputStream = client.getOutputStream();
             InputStream inputStream = client.getInputStream();
 
-            String request = new String(StreamUtils.readBytes(inputStream));
-            Log.d(TAG, "Request: " + request);
+            BleRequest bleRequest = BleRequest.parseJson(new String(StreamUtils.readBytes(inputStream)));
+            Log.d(TAG, "Request: " + bleRequest.getUrl());
 
             // Get HTTP Response
             OkHttpClient httpClient = new OkHttpClient();
-            Request httpRequest = new Request.Builder().url(request).build();
+            Request httpRequest = new Request.Builder().url(bleRequest.getUrl()).build();
             Response httpResponse = httpClient.newCall(httpRequest).execute();
-            String toSend = httpResponse.body().string();
+            BleResponse bleResponse = new BleResponse.Builder().response(httpResponse).build();
+            String toSend = bleResponse.toJsonString();
             Log.d(TAG, "Http Response: " + toSend);
 
             // Write back to client
