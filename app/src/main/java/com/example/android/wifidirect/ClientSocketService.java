@@ -50,35 +50,24 @@ public class ClientSocketService extends IntentService {
                         TAG, "Opening client socket - ");
                 socket.bind(null);
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
+                Log.d(TAG, "Search and connect: " + (System.currentTimeMillis() - MainActivity.connectTime));
 
+                MainActivity.TIME = System.currentTimeMillis();
                 Log.d(MainActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream outputStream = socket.getOutputStream();
                 InputStream inputStream = socket.getInputStream();
-                BleRequest response = new BleRequest.Builder().url(data).body("lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n" +
-                        "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem\n").build();
+                BleRequest response = new BleRequest.Builder().url(data).build();
 
                 StreamUtils.sendBytes(response.toJsonString().getBytes(), outputStream);
                 Log.d(MainActivity.TAG, "Client: Data written");
 
                 BleResponse bleResponse = BleResponse.parseResponse(new String(StreamUtils.readBytes(inputStream)));
                 Log.d(TAG, "received response: " + bleResponse.getBody().length());
+                Log.d(TAG, "Time: " + (System.currentTimeMillis() - MainActivity.TIME));
                 inputStream.close();
                 socket.close();
+
+
 //                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 Log.e(MainActivity.TAG, e.getMessage());

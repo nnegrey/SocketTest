@@ -36,6 +36,7 @@ import okhttp3.Response;
  */
 public class MainActivity extends Activity implements WifiP2pManager.PeerListListener, WifiP2pManager.ConnectionInfoListener {
     public static final String TAG = "MainActivity";
+    public static long TIME = 0;
 
     @BindView(R.id.serverButton)
     Button buttonServer;
@@ -53,6 +54,7 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
     private BroadcastReceiver receiver = null;
     WifiP2pDevice device;
     private boolean checkPeers = true;
+    public static long connectTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class MainActivity extends Activity implements WifiP2pManager.PeerListLis
 
             @Override
             public void onClick(View arg0) {
+                connectTime = System.currentTimeMillis();
                 weConnect = true;
                 discoverPeers();
             }
